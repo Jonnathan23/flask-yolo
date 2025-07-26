@@ -1,7 +1,7 @@
 import cv2
 
 def video_capture_local():
-    """Genera un stream MJPEG en escala de grises desde la cámara local.
+    """Genera un stream MJPEG desde la cámara local.
 
     Abre `cv2.VideoCapture(0)`, lee fotogramas, los convierte a gris
     y los emite codificados en JPEG para streaming HTTP.

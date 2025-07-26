@@ -2,7 +2,7 @@ from flask import Blueprint, Response
 
 from app.renderVideo import video_capture_local
 
-router = Blueprint("main",__name__)
+router = Blueprint("apiRoutes",__name__)
 
 
 @router.route('/video_stream_local')
