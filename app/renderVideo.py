@@ -17,7 +17,7 @@ def video_capture_local():
     print("Iniciando captura de video local...")
     width = 320
     height = 240
-    fullWidth = width * 2
+    fullWidth = width * 3
     
     prev_time = time.perf_counter() 
     cap = cv2.VideoCapture(0)
@@ -63,17 +63,18 @@ def video_capture_local():
                     )
                     # ajustar tamaño al panel derecho
                     matchVis = cv.resize(matchVis, (width, height))
-                    canvas[:, width:] = matchVis
+                    canvas[:, width*2:width*3] = matchVis
                 else:
-                    # si no llegan al umbral, mostramos sólo keypoints
-                    kpVis = cv.drawKeypoints(
-                        frame, result.frameKeyPoints, None,
-                        flags=cv.DrawMatchesFlags_DEFAULT
-                    )
-                    canvas[:, width:] = kpVis
+                    canvas[:, width*2:width*3] = 0
+                # si no llegan al umbral, mostramos sólo keypoints
+                kpVis = cv.drawKeypoints(
+                    frame, result.frameKeyPoints, None,
+                    flags=cv.DrawMatchesFlags_DEFAULT
+                )
+                canvas[:, width:width*2] = kpVis
             else:
                 # para LBP u otras operaciones
-                canvas[:, width:] = frame
+                canvas[:, width:width*2] = frame
             
             
             
