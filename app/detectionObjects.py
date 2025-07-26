@@ -5,6 +5,7 @@ import numpy as np
 
 from app.classes.index import OperationDetector
 from app.data.db import imageObjective
+from app.utils.filters import upgradeImage
 
 
 def implementLBP():
@@ -20,6 +21,7 @@ class MatchResult:
     homography: Optional[np.ndarray]    = None
 
 
+sift = cv.SIFT_create(800, 3, 0.06, 10)
 
 def implementSIFT(frame: np.ndarray) -> MatchResult:
     """
@@ -27,8 +29,9 @@ def implementSIFT(frame: np.ndarray) -> MatchResult:
     Si las coincidencias superan el umbral, devuelve MatchResult(found=True).
     De lo contrario, found=False.
     """
-    sift      = cv.SIFT_create(800, 3, 0.06, 10)
-    kp_frame, desc_frame = sift.detectAndCompute(frame, None)
+    
+    frameUpgraged = upgradeImage(frame)
+    kp_frame, desc_frame = sift.detectAndCompute(frameUpgraged, None)
     
     # si no hay descriptores, devolvemos sin keypoints
     if desc_frame is None or desc_frame.shape[0] < 2:
@@ -42,7 +45,7 @@ def implementSIFT(frame: np.ndarray) -> MatchResult:
         dict(checks=32)
     )
     raw    = matcher.knnMatch(imageObjective.descriptors, desc_frame, k=2)
-    good   = [m for m,n in raw if m.distance < 0.75 * n.distance]
+    good   = [m for m,n in raw if m.distance < 0.85 * n.distance]
 
     # 3) RANSAC homografía
     if len(good) < 10:

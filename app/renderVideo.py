@@ -32,10 +32,12 @@ def video_capture_local():
             if not ret:
                 break
             frame = cv2.resize(frame, (width, height)) 
+            # panel izquierdo: imagen sin procesar
+            canvas[:, :width] = frame
             
             result = executeDetection[operation](frame)
             
- # —————————————— Preprocesado ——————————————
+        # —————————————— Preprocesado ——————————————
             frame = cv.resize(frame, (width, height))
             now   = time.perf_counter()
             fps   = 1.0 / (now - prev_time) if now != prev_time else 0.0
@@ -47,8 +49,7 @@ def video_capture_local():
             # —————————————— Detección SIFT ——————————————
             result = executeDetection[operation](frame)
 
-            # panel izquierdo: imagen sin procesar
-            canvas[:, :width] = frame
+
 
             # panel derecho: dibujo de keypoints o de matches
             if operation == OperationDetector.SIFT and result.found and result.goodMatches:
