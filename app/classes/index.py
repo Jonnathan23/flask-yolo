@@ -63,3 +63,7 @@ class ImageObjective:
             f"ImageObjective(id={self.objectId}, "
             f"kp={len(self.keyPoints)}, shape={self.shape})"
         )
+
+class OperationDetector:
+    LBP = "LBP"
+    SIFT = "SIFT"

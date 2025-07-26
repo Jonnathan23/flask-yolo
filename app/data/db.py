@@ -1,9 +1,6 @@
-from app.utils.imageObjective import ImageObjective
+from app.classes.index import ImageObjective, OperationDetector
         
 #* Data P
-class OperationDetector:
-    LBP = "LBP"
-    SIFT = "SIFT"
 
 operation = OperationDetector.SIFT
 pathImage = "app/static/img/astro.png"
