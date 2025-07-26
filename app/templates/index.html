@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" as="style">
+    <title>Fin de ciclo</title>
+</head>
+
+<body class="container">
+    <header class="header">
+        <div class="header--tittle--container">
+            <div class="header--content--image">
+                <img src="{{ url_for('static', filename='Header.webp') }}" alt="Image_header">
+            </div>
+        </div>
+        <nav class="header--nav">
+            <a class="header--nav--a active" href="{{ url_for('main.index') }}">Parte 1-A</a>            
+        </nav>
+    </header>
+    <main class="main">
+        <div class="cont--controllers">
+            <div class="cont--select--container">
+                <select name="equalize" id="equalize">
+                    <option value="0" disabled selected>---- Seleccione Ecualizacion ----</option>
+                    <option value="1">Original</option>
+                    <option value="2">Histograma</option>
+                    <option value="3">CLAHE</option>
+                </select>
+                <select name="operations" id="operations">
+                    <option value="0" disabled selected>---- Seleccione la Operacion ----</option>
+                    <option value="1">And</option>
+                    <option value="2">Or</option>
+                    <option value="3">Xor</option>
+                </select>
+            </div>
+            <div class="cont--buttons">
+                <button id="btEsp">Ver video con esp32</button>
+                <button id="btLocal">Ver video Local</button>
+            </div>
+        </div>
+        <div class="cont--steaming">
+            <img id="streaming_image" class="streaming" src="#" alt="Video_streaming">
+        </div>
+    </main>
+    <footer>
+        <p>Práctica Vision del computador P66</p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+
+</html>
