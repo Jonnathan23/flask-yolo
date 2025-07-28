@@ -1,6 +1,7 @@
 //* Urls
 const urlDefaultImage = "{{ url_for('static', filename='img/selectImage.jpg') }}";
 const urlStreamingDesktop = '/video_stream_local';
+const urlStreamingMobile = '/video_stream_mobile';
 
 const operations = {
     LBP: "LBP",
@@ -28,7 +29,7 @@ const streamingImage = document.getElementById('streaming_image')
 // Buttons
 btLocal.addEventListener('click', () => setUrlStreaming(urlStreamingDesktop))
 
-//btMobile.addEventListener('click', () => setUrlStreaming('set-operation',urlStreamingEsp32))
+btMobile.addEventListener('click', () => setUrlStreaming(urlStreamingMobile))
 
 
 //* Functions
