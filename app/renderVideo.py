@@ -3,7 +3,6 @@ import cv2 as cv
 import time
 import numpy as np
 import socket
-from flask import Response
 
 import app.data.db as db
 from app.detectionObjects import executeDetection
@@ -62,49 +61,65 @@ def video_capture_local():
     finally:
         cap.release()
 
-'''
+
 def video_capture_mobile():
     # Crea y enlaza el socket UDP al puerto donde la app envía los datagramas
+    print("Iniciando captura de video móvil...")
     serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     serverSocket.bind(("0.0.0.0", 5005))
 
     prevTime = time.perf_counter()
+    
+    width = 320
+    height = 240
+    fullWidth = width * 3
+    
+    width, height, fullWidth = 320, 240, 320*3
+    canvas = np.zeros((height, fullWidth, 3), dtype=np.uint8)
+    prevTime = time.perf_counter()
 
     while True:
-        # Recibe el frame bruto
-        frameBytes, clientAddress = serverSocket.recvfrom(65536)
-
-        # Decodifica a imagen OpenCV
+        frameBytes, _ = serverSocket.recvfrom(65536)
         npArray = np.frombuffer(frameBytes, dtype=np.uint8)
         frame = cv2.imdecode(npArray, cv2.IMREAD_COLOR)
-        if frame is None: 
-            continue
+        if frame is None: continue  # conditional en una sola línea
 
-        # Convierte a gris y calcula FPS
-        grayImage = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        nowTime = time.perf_counter()
-        fps = 1.0 / (nowTime - prevTime) if nowTime != prevTime else 0.0
-        prevTime = nowTime
-        cv2.putText(grayImage,
+        # redimensionar y dibujar original
+        frameResized = cv2.resize(frame, (width, height))
+        canvas[:, :width] = frameResized
+
+        # detección según operación
+        result = executeDetection[db.operation](frameResized)
+
+        # cálculo de FPS
+        now = time.perf_counter()
+        fps = 1.0/(now-prevTime) if now!=prevTime else 0.0
+        prevTime = now
+        cv2.putText(frameResized,
                     f"FPS: {fps:.1f}",
                     (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     1,
-                    255,
+                    (255,255,255),
                     2,
                     cv2.LINE_AA)
 
-        # Codifica a JPEG para el stream
-        success, jpeg = cv2.imencode('.jpg', frame)
-        if not success:
-            continue
+        # panel derecho: SIFT / LBP / original
+        if db.operation==OperationDetector.SIFT and result.found and result.goodMatches:
+            drawSiftResults(result, frameResized, width, height, canvas)
+        elif db.operation==OperationDetector.LBP:
+            canvas[:, width:width*2] = result
+        else:
+            canvas[:, width:width*2] = frameResized
 
-        # Genera el chunk MJPEG
+        # codificar y enviar
+        success, encoded = cv2.imencode('.jpg', canvas)
+        if not success: continue
+
         yield (
             b'--frame\r\n'
             b'Content-Type: image/jpeg\r\n\r\n' +
-            bytearray(jpeg) +
+            bytearray(encoded) +
             b'\r\n'
         )
         
-        '''

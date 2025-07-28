@@ -170,6 +170,7 @@ body {
 .streaming {
     width: 100%;
     max-width: 30rem;
+    max-height: 30rem;
 }
 
 @media (min-width: 464px) {
