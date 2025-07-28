@@ -2,11 +2,12 @@ import cv2
 from app.classes.index import ImageObjective, OperationDetector
         
 #* Data P
-
-operation = OperationDetector.LBP
+print( "Inicializando base de datos...")
+operation = ""
 pathImage = "app/static/img/astro.png"
 pathLBP = "app/static/model/cascade.xml"
 
+ipMobile = "0"
 imageObjective = ImageObjective(pathImage, objectId="selectImage")
 
 detector = cv2.CascadeClassifier(pathLBP)

@@ -20,6 +20,7 @@ const btStopStreaming = document.getElementById('btStopStream')
 
 const loadingCamera = document.getElementById('loading-camera')
 
+const formIp = document.getElementById('form_ip')
 
 
 // Image
@@ -29,11 +30,12 @@ const streamingImage = document.getElementById('streaming_image')
 // Buttons
 btLocal.addEventListener('click', () => setUrlStreaming(urlStreamingDesktop))
 
+formIp.addEventListener('submit', (e) => setIp(e))
+
 
 //btMobile.addEventListener('click', () => setUrlStreaming('set-operation',urlStreamingEsp32))
 
 
-//* Functions
 //* Functions
 const setUrlStreaming = async (urlStreaming) => {
     console.log('Setting streaming URL:', urlStreaming);
@@ -50,10 +52,35 @@ const setUrlStreaming = async (urlStreaming) => {
     }).then(() => {
         console.log('Setting streaming URL:', urlStreaming);
         streamingImage.src = urlStreaming;
-        setTimeout(function () {         
+        setTimeout(function () {
             loadingCamera.className = loadingCameraClass.hide;
-            console.log('Streaming URL set successfully');   
+            console.log('Streaming URL set successfully');
         }, 3000);
     })
+}
 
+const setIp = (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.target));
+    const dataJson = JSON.stringify(data);
+    console.log('Setting IP:', data.ip);
+    loadingCamera.className = loadingCameraClass.show;
+    fetch('/set_ip', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            ip: data.ip,
+            operation: operations.LBP
+        })
+    }).then(() => {
+        setTimeout(function () {
+            streamingImage.src = urlStreamingDesktop;
+            loadingCamera.className = loadingCameraClass.hide;
+            console.log('Streaming URL set successfully');
+        }, 3000);
+    }).catch((error) => {
+        alert('Error setting IP:', error);
+    });
 }

@@ -17,7 +17,9 @@ const loadingCameraClass = {
 // Botones
 const btMobile = document.getElementById('btMobile')
 const btLocal = document.getElementById('btLocal')
-const btStopStreaming = document.getElementById('btStopStream')
+
+const loadingCamera = document.getElementById('loading-camera')
+
 
 // Image
 const streamingImage = document.getElementById('streaming_image')
@@ -25,13 +27,14 @@ const streamingImage = document.getElementById('streaming_image')
 //* Events
 // Buttons
 btLocal.addEventListener('click', () => setUrlStreaming(urlStreamingDesktop))
-btStopStreaming.addEventListener('click', () => setUrlStreaming(urlDefaultImage))
 
 //btMobile.addEventListener('click', () => setUrlStreaming('set-operation',urlStreamingEsp32))
 
 
 //* Functions
-const setUrlStreaming = async (urlStreaming) => {
+const setUrlStreaming = (urlStreaming) => {
+    console.log('Setting streaming URL:', urlStreaming);
+    loadingCamera.className = loadingCameraClass.show;
     fetch('/set_operation', {
         method: 'POST',
         headers: {
@@ -44,6 +47,6 @@ const setUrlStreaming = async (urlStreaming) => {
     }).then(() => {
         console.log('Setting streaming URL:', urlStreaming);
         streamingImage.src = urlStreaming;
+        loadingCamera.className = loadingCameraClass.hide;
     })
-
 }

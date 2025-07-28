@@ -13,12 +13,13 @@ def video_stream_local():
 
 
 @router.route('/set_operation', methods=['POST'])
-def nameRouter():
-    data = request.get_json() 
+def setOperation():
+    data = request.get_json()     
     print(data)
     setOperation = data.get('operation')
     if not setOperation:
         abort(400, "No operation provided")
     
     db.operation = setOperation
+    print(f"Operation set to: {db.operation}")
     return "Operation set successfully", 200
