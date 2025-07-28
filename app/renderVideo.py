@@ -45,10 +45,7 @@ def video_capture_local():
             prev_time = now
             cv.putText(frame, f"FPS: {fps:.1f}",
                 (10,30), cv.FONT_HERSHEY_SIMPLEX,
-                1, (255,255,255), 2, cv.LINE_AA)
-
-            # —————————————— Detección SIFT/LBP ——————————————
-            result = executeDetection[operation](frame)
+                1, (255,255,255), 2, cv.LINE_AA)            
 
             # panel derecho: dibujo de keypoints o de matches
             if operation == OperationDetector.SIFT and result.found and result.goodMatches:

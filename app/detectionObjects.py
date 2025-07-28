@@ -1,25 +1,28 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Tuple
 import cv2 as cv
 import numpy as np
 
 from app.classes.index import OperationDetector
 from app.data.db import imageObjective, detector
 from app.utils.filters import upgradeImage
+from app.utils.utils import filterAndMergeDetections
 
 
-def implementLBP(frame: np.ndarray):        
-    faces = detector.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5)
-    
-    # Aplicar desenfoque gaussiano en cada ROI (sin máscara)
-    for (x, y, w, h) in faces:
-        roi = frame[y:y+h, x:x+w]
-        blurred_roi = cv.GaussianBlur(roi, (31, 31), 0)
-        frame[y:y+h, x:x+w] = blurred_roi
-        cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Opcional
-
+def implementLBP(frame: cv.UMat) -> cv.UMat:
+    """
+    Detect faces with LBP, filter and merge nested/close detections,
+    then blur once and draw a single box per face.
+    """
+    rawDetections = detector.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5)
+    detectionRectangles: List[Tuple[int,int,int,int]] = [tuple(r) for r in rawDetections]
+    finalDetections = filterAndMergeDetections(detectionRectangles, iouThreshold=0.4, distanceThresholdRatio=0.5)
+    for x, y, w, h in finalDetections:
+        roi = frame[y:y+h, x:x+w]; frame[y:y+h, x:x+w] = cv.GaussianBlur(roi, (31, 31), 0)
+        cv.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
     return frame
-    
+
+
 @dataclass
 class MatchResult:
     found: bool
