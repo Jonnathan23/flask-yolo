@@ -16,8 +16,8 @@ def implementLBP(frame: np.ndarray):
         roi = frame[y:y+h, x:x+w]
         blurred_roi = cv.GaussianBlur(roi, (31, 31), 0)
         frame[y:y+h, x:x+w] = blurred_roi
-        cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Opcional    
-    
+        cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Opcional
+
     return frame
     
 @dataclass
