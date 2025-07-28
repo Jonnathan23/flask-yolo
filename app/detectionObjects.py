@@ -4,13 +4,21 @@ import cv2 as cv
 import numpy as np
 
 from app.classes.index import OperationDetector
-from app.data.db import imageObjective
+from app.data.db import imageObjective, detector
 from app.utils.filters import upgradeImage
 
 
-def implementLBP():
-    print("Implementing LBP (Local Binary Patterns) for feature extraction.")
+def implementLBP(frame: np.ndarray):        
+    faces = detector.detectMultiScale(frame, scaleFactor=1.1, minNeighbors=5)
     
+    # Aplicar desenfoque gaussiano en cada ROI (sin máscara)
+    for (x, y, w, h) in faces:
+        roi = frame[y:y+h, x:x+w]
+        blurred_roi = cv.GaussianBlur(roi, (31, 31), 0)
+        frame[y:y+h, x:x+w] = blurred_roi
+        cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Opcional    
+    
+    return frame
     
 @dataclass
 class MatchResult:

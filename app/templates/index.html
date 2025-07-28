@@ -10,6 +10,9 @@
 </head>
 
 <body class="container">
+    <div id="loading-camera" class="message-hide">
+        <p>Encendiendo camara...</p>
+    </div>
     <header class="header">
         <div class="header--tittle--container">
             <h1>LBP</h1>
@@ -23,21 +26,7 @@
         </nav>
     </header>
     <main class="main">
-        <div class="cont--controllers">
-            <div class="cont--select--container">
-                <select name="equalize" id="equalize">
-                    <option value="0" disabled selected>---- Seleccione Ecualizacion ----</option>
-                    <option value="1">Original</option>
-                    <option value="2">Histograma</option>
-                    <option value="3">CLAHE</option>
-                </select>
-                <select name="operations" id="operations">
-                    <option value="0" disabled selected>---- Seleccione la Operacion ----</option>
-                    <option value="1">And</option>
-                    <option value="2">Or</option>
-                    <option value="3">Xor</option>
-                </select>
-            </div>
+        <div class="cont--controllers">            
             <div class="cont--buttons">
                 <button id="btMobile">
                     <p> Ver video con el celular </p>

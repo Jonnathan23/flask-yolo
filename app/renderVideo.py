@@ -6,6 +6,7 @@ import numpy as np
 from app.data.db import  operation, imageObjective
 from app.detectionObjects import executeDetection
 from app.classes.index import OperationDetector
+from app.utils.utils import drawSiftResults
 
 
 def video_capture_local():
@@ -37,48 +38,29 @@ def video_capture_local():
             
             result = executeDetection[operation](frame)
             
-        # —————————————— Preprocesado ——————————————
+            # —————————————— Preprocesado ——————————————
             frame = cv.resize(frame, (width, height))
             now   = time.perf_counter()
             fps   = 1.0 / (now - prev_time) if now != prev_time else 0.0
             prev_time = now
             cv.putText(frame, f"FPS: {fps:.1f}",
-                       (10,30), cv.FONT_HERSHEY_SIMPLEX,
-                       1, (255,255,255), 2, cv.LINE_AA)
+                (10,30), cv.FONT_HERSHEY_SIMPLEX,
+                1, (255,255,255), 2, cv.LINE_AA)
 
-            # —————————————— Detección SIFT ——————————————
+            # —————————————— Detección SIFT/LBP ——————————————
             result = executeDetection[operation](frame)
-
-
 
             # panel derecho: dibujo de keypoints o de matches
             if operation == OperationDetector.SIFT and result.found and result.goodMatches:
-                # Sólo dibujamos cuando tenemos >70 goodMatches
-                if len(result.goodMatches) > 70:
-                    # drawMatches entre logo e imagen actual
-                    matchVis = cv.drawMatches(
-                        imageObjective.image, imageObjective.keyPoints,
-                        frame,                    result.frameKeyPoints,
-                        result.goodMatches,       None,
-                        flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS
-                    )
-                    # ajustar tamaño al panel derecho
-                    matchVis = cv.resize(matchVis, (width, height))
-                    canvas[:, width*2:width*3] = matchVis
-                else:
-                    canvas[:, width*2:width*3] = 0
-                # si no llegan al umbral, mostramos sólo keypoints
-                kpVis = cv.drawKeypoints(
-                    frame, result.frameKeyPoints, None,
-                    flags=cv.DrawMatchesFlags_DEFAULT
-                )
-                canvas[:, width:width*2] = kpVis
-            else:
+                drawSiftResults(result, frame, width, height, canvas)
+            
+            if operation == OperationDetector.LBP:
                 # para LBP u otras operaciones
-                canvas[:, width:width*2] = frame
+                canvas[:, width:width*2] = result           
             
-            
-            
+            else:
+                # panel derecho: imagen sin procesar
+                canvas[:, width:width*2] = frame            
             _, encoded = cv2.imencode('.jpg', canvas)
             yield (b'--frame\r\n'                   b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encoded) + b'\r\n')
             
